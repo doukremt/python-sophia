@@ -11,6 +11,6 @@ With the source package::
 
     python setup.py install
 
-You can consult the online documentation of this package `here <http://python-sophia.readthedocs.org/en/latest/>`. It is also present in the source package under ``doc/_build/html/``
+You can consult the online documentation of this package `here <http://python-sophia.readthedocs.org/en/latest/>`_. It is also present in the source package under ``doc/_build/html/``
 
 If you want to check how the library performs, look at the `benchmarks <http://sphia.org/benchmarks.html>`_ on the website of the author, and run the script ``bench.py`` located in the ``tests`` directory of this package.
