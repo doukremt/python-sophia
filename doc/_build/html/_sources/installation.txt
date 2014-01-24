@@ -1,0 +1,18 @@
+This package provides C bindings for `libsophia <http://sphia.org/>`_, which is a ligthweight DBM-like database. Available operations on a database are inserting or deleting a key-value pair, or retrieving a value given its key. It is also possible to traverse the keys of a database, its values, or both, in ascending or descending order. Transactions are also supported.
+
+Installation
+************
+
+With pip::
+
+    pip install sophia
+
+With the source package::
+
+    python setup.py install
+
+To uninstall the package, with pip::
+
+    pip uninstall sophia
+
+To uninstall from a source-install, just remove the files that were copied during the installation.

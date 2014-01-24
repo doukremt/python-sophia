@@ -1,0 +1,44 @@
+API
+===
+
+Error
+	Exception raised for all the database-related errors.
+
+Database.setopt(constant, value1..)
+	Set an option on this database.
+
+Database.open(path, mode='r')
+	Open a connection to the database.
+	
+Database.close()
+	Close the current connection, if any.
+
+Database.set(key, value)
+	Add a record.
+
+Database.get(key)
+	Retrieve a record.
+
+Database.contains(key)
+	Is this key in the database?
+
+Database.begin()
+	Start a transaction.
+
+Database.commit()
+	Commit the current transaction.
+
+Database.rollback()
+	Abort the current transaction.
+
+Database.len()
+	How many records are there in this database?
+
+Database.iterkeys(start_key=None, order=sophia.SPGTE)
+	Iterate over all the keys in the database.
+
+Database.itervalues(start_key=None, order=sophia.SPGTE)
+	Iterate over all the values in the database.
+
+Database.iteritems(start_key=None, order=sophia.SPGTE)
+	Iterate over all the pairs of (key, value) in the database.

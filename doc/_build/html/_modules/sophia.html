@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>sophia &mdash; pysophia 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pysophia 0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">pysophia 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for sophia</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Database&#39;</span><span class="p">,</span> <span class="s">&#39;Error&#39;</span><span class="p">,</span> <span class="s">&#39;ObjectDatabase&#39;</span><span class="p">,</span> <span class="s">&#39;SPCMP&#39;</span><span class="p">,</span> <span class="s">&#39;SPGC&#39;</span><span class="p">,</span> <span class="s">&#39;SPGCF&#39;</span><span class="p">,</span> <span class="s">&#39;SPGROW&#39;</span><span class="p">,</span> <span class="s">&#39;SPGT&#39;</span><span class="p">,</span> <span class="s">&#39;SPGTE&#39;</span><span class="p">,</span> <span class="s">&#39;SPLT&#39;</span><span class="p">,</span> <span class="s">&#39;SPLTE&#39;</span><span class="p">,</span> <span class="s">&#39;SPMERGE&#39;</span><span class="p">,</span> <span class="s">&#39;SPMERGEWM&#39;</span><span class="p">,</span> <span class="s">&#39;SPPAGE&#39;</span><span class="p">,</span> <span class="s">&#39;ThreadedDatabase&#39;</span><span class="p">,</span> <span class="s">&#39;ThreadedObjectDatabase&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">_sophia</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">threading</span><span class="o">,</span> <span class="nn">pickle</span>
+
+
+<div class="viewcode-block" id="ObjectDatabase"><a class="viewcode-back" href="../reference.html#sophia.ObjectDatabase">[docs]</a><span class="k">class</span> <span class="nc">ObjectDatabase</span><span class="p">(</span><span class="n">Database</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Database model for storing arbitrary kinds of objects.</span>
+<span class="sd">	</span>
+<span class="sd">	`pack_key`, `unpack_key`, `pack_value`, and `unpack_value`, should be callables that, when passed</span>
+<span class="sd">	an object as parameter, return a byte representation of it, suitable for storage. By default, all</span>
+<span class="sd">	these functions use the :mod:`pickle` module.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pack_key</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">,</span> <span class="n">unpack_key</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span>
+		<span class="n">pack_value</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">,</span> <span class="n">unpack_value</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pack_key</span> <span class="o">=</span> <span class="n">pack_key</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">unpack_key</span> <span class="o">=</span> <span class="n">unpack_key</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pack_value</span> <span class="o">=</span> <span class="n">pack_value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">unpack_value</span> <span class="o">=</span> <span class="n">unpack_value</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+		
+
+	<span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">default</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">default</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">default</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_value</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+	
+	<span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_key</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">iterkeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_key</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">SPGTE</span><span class="p">):</span>
+		<span class="n">begin</span> <span class="o">=</span> <span class="n">start_key</span> <span class="k">if</span> <span class="n">start_key</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_key</span><span class="p">(</span><span class="n">start_key</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">order</span><span class="p">))</span>
+	
+	<span class="k">def</span> <span class="nf">itervalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_key</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">SPGTE</span><span class="p">):</span>
+		<span class="n">begin</span> <span class="o">=</span> <span class="n">start_key</span> <span class="k">if</span> <span class="n">start_key</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_key</span><span class="p">(</span><span class="n">start_key</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">order</span><span class="p">))</span>
+	
+	<span class="k">def</span> <span class="nf">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_key</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">SPGTE</span><span class="p">):</span>
+		<span class="n">begin</span> <span class="o">=</span> <span class="n">start_key</span> <span class="k">if</span> <span class="n">start_key</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_key</span><span class="p">(</span><span class="n">start_key</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack_key</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_value</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> \
+			<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">order</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="ThreadedDatabase"><a class="viewcode-back" href="../reference.html#sophia.ThreadedDatabase">[docs]</a><span class="k">class</span> <span class="nc">ThreadedDatabase</span><span class="p">(</span><span class="n">Database</span><span class="p">):</span>
+
+	<span class="sd">&quot;&quot;&quot;Thread-safe database model.</span>
+<span class="sd">	</span>
+<span class="sd">	It should only be used if you want to use a database in a threaded environment</span>
+<span class="sd">	AND need to iterate over it. Otherwise, the vanilla :class:`Database` class is suitable</span>
+<span class="sd">	(and more efficient).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">ThreadedDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">_protect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+		<span class="k">finally</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">_protect_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">something</span> <span class="ow">in</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+				<span class="k">yield</span> <span class="n">something</span>
+		<span class="k">finally</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+	
+	<span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protect</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ThreadedDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protect</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ThreadedDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">iterkeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protect_iter</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ThreadedDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">itervalues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protect_iter</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ThreadedDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">itervalues</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protect_iter</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ThreadedDatabase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ThreadedObjectDatabase"><a class="viewcode-back" href="../reference.html#sophia.ThreadedObjectDatabase">[docs]</a><span class="k">class</span> <span class="nc">ThreadedObjectDatabase</span><span class="p">(</span><span class="n">ObjectDatabase</span><span class="p">,</span> <span class="n">ThreadedDatabase</span><span class="p">):</span>
+	
+	<span class="sd">&quot;&quot;&quot;Mixing of a :class:`ThreadedDatabase` and an :class:`ObjectDatabase`.&quot;&quot;&quot;</span>
+	
+	<span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">pysophia 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Michaël Meyer.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>

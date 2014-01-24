@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial &mdash; pysophia 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pysophia 0.1 documentation" href="index.html" />
+    <link rel="next" title="Reference" href="reference.html" />
+    <link rel="prev" title="pysophia documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="pysophia documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pysophia 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>All examples below assume Python 2. To run them under Python 3, replace the <tt class="docutils literal"><span class="pre">&quot;strings&quot;</span></tt> expressions by <tt class="docutils literal"><span class="pre">b&quot;byte</span> <span class="pre">strings&quot;</span></tt>.</p>
+<div class="section" id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<p>A database consists in a directory containing a set of files, which is represented in Python by the <a class="reference internal" href="reference.html#sophia.Database" title="sophia.Database"><tt class="xref py py-class docutils literal"><span class="pre">sophia.Database</span></tt></a> class. Databases are opened and closed respectively with the <tt class="xref py py-meth docutils literal"><span class="pre">Database.open()</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">Database.close()</span></tt> methods:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sophia</span>
+
+<span class="c"># create the object</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">sophia</span><span class="o">.</span><span class="n">Database</span><span class="p">()</span>
+
+<span class="c"># open the database, creating it if it does&#39;nt exist yet.</span>
+<span class="n">db</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;mydb&quot;</span><span class="p">)</span>
+
+<span class="c"># close it</span>
+<span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Database objects are implicitly closed when they go out of scope, but you should not rely on this behaviour, and always close them explicitly when you&#8217;re done with them.</p>
+<p>Database-related errors all raise a <a class="reference internal" href="reference.html#sophia.Error" title="sophia.Error"><tt class="xref py py-class docutils literal"><span class="pre">sophia.Error</span></tt></a> exception. You can catch it with typical <tt class="docutils literal"><span class="pre">try</span></tt>... <tt class="docutils literal"><span class="pre">except</span></tt>... <tt class="docutils literal"><span class="pre">finally</span></tt> statements:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">db</span> <span class="o">=</span> <span class="n">sophia</span><span class="o">.</span><span class="n">Database</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;mydb&quot;</span><span class="p">)</span>
+    <span class="c"># do something with `db`</span>
+<span class="k">except</span> <span class="n">sophia</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Error: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> <span class="c"># this has no effect if the db is not opened</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="reference.html#sophia.Database" title="sophia.Database"><tt class="xref py py-class docutils literal"><span class="pre">sophia.Database</span></tt></a> object only deals with bytes (named <tt class="xref py py-class docutils literal"><span class="pre">str</span></tt> under Python 2, <tt class="xref py py-class docutils literal"><span class="pre">bytes</span></tt> in Python 3). Transparent data serialization is done by the <a class="reference internal" href="reference.html#sophia.ObjectDatabase" title="sophia.ObjectDatabase"><tt class="xref py py-class docutils literal"><span class="pre">sophia.ObjectDatabase</span></tt></a> class, for which see below.</p>
+</div>
+<div class="section" id="storing-and-deleting-records">
+<h2>Storing and deleting records<a class="headerlink" href="#storing-and-deleting-records" title="Permalink to this headline">¶</a></h2>
+<p>Records are added with the <tt class="xref py py-meth docutils literal"><span class="pre">Database.set()</span></tt> method, and deleted with <tt class="xref py py-meth docutils literal"><span class="pre">Database.delete()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># create a database</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">sophia</span><span class="o">.</span><span class="n">Database</span><span class="p">()</span>
+<span class="n">db</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;actresses&quot;</span><span class="p">)</span>
+
+<span class="c"># add some records</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Audrey Hepburn&quot;</span><span class="p">,</span> <span class="s">&quot;Breakfast at Tiffany&#39;s&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Grace Kelly&quot;</span><span class="p">,</span> <span class="s">&quot;To Catch a Thief&quot;</span><span class="p">)</span>
+
+<span class="c"># update a record</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Audrey Hepburn&quot;</span><span class="p">,</span> <span class="s">&quot;War and Peace&quot;</span><span class="p">)</span>
+
+<span class="c"># delete a record</span>
+<span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&quot;Audrey Hepburn&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When using these functions, database modifications are performed atomically, which adds some overhead. If you want to store several records at once, you can use explicit transactions. The added items will then be kept into memory until the transaction is committed or aborted, at which time they will be saved or left away, respectively. Transactions are really easy to perform:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># start a transaction</span>
+<span class="n">db</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+
+<span class="c"># add some items, remove some others</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Scarlett Johansson&quot;</span><span class="p">,</span> <span class="s">&quot;The Black Dahlia&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Uma Thurman&quot;</span><span class="p">,</span> <span class="s">&quot;Pulp Fiction&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s">&quot;Grace Kelly&quot;</span><span class="p">)</span>
+
+<span class="c"># save the changes</span>
+<span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+<span class="c"># make another transaction</span>
+<span class="n">db</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Nicole Kidman&quot;</span><span class="p">,</span> <span class="s">&quot;Shakespeare in Love&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;Gwyneth Paltrow&quot;</span><span class="p">,</span> <span class="s">&quot;Dogville&quot;</span><span class="p">)</span>
+
+<span class="c"># oops, interverted the films names, so abort the transaction</span>
+<span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="retrieving-records">
+<h2>Retrieving records<a class="headerlink" href="#retrieving-records" title="Permalink to this headline">¶</a></h2>
+<p>Records can be retrieved by using the <tt class="xref py py-meth docutils literal"><span class="pre">Database.get()</span></tt> method, and checked for existence with the <tt class="xref py py-meth docutils literal"><span class="pre">Database.contains()</span></tt> method.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Scarlett Johansson&quot;</span><span class="p">)</span>
+<span class="go">&quot;The Black Dahlia&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;Scarlett Johansson&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;Nicole Kidman&quot;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>If a second argument is given to <tt class="xref py py-meth docutils literal"><span class="pre">Database.get()</span></tt>, it will be returned as value if the key is not in the database. The default is to return <cite>None</cite> when a key is missing.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Gwyneth Paltrow&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Gwyneth Paltrow&quot;</span><span class="p">,</span> <span class="s">&quot;A perfect number&quot;</span><span class="p">)</span>
+<span class="go">&quot;A perfect number&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="traversing-records">
+<h2>Traversing records<a class="headerlink" href="#traversing-records" title="Permalink to this headline">¶</a></h2>
+<p>Records can be traversed in order with the <tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt>, <tt class="xref py py-meth docutils literal"><span class="pre">Database.itervalues()</span></tt>, or <tt class="xref py py-meth docutils literal"><span class="pre">Database.iteritems()</span></tt> methods, which yield respectively the keys, the values, or the pairs of (key, value) in the database. These methods take two optional arguments: the key at which to start iterating (which need not necessarily exist in the database), and the order in which the records should be traversed. Possible values for the <cite>order</cite> argument are:</p>
+<ul class="simple">
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPGT</span></tt>  - increasing order (skipping the key, if it is equal)</li>
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPGTE</span></tt> - increasing order (with key)</li>
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPLT</span></tt>  - decreasing order (skipping the key, if it is equal)</li>
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPLTE</span></tt> - decreasing order</li>
+</ul>
+<p>By default, iteration is done in lexicographical order, and starts at the very first key in the database, including it.</p>
+<p>Here is, for example, how you would iterate over all the keys in a database starting with a given prefix, skipping the prefix itself (if it exists), and in lexicographical order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sophia</span><span class="o">,</span> <span class="nn">itertools</span>
+
+<span class="k">def</span> <span class="nf">iter_prefixes</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">sophia</span><span class="o">.</span><span class="n">SPGT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="n">cursor</span><span class="p">)</span>
+
+<span class="c"># create a database with some records to check this works</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">sophia</span><span class="o">.</span><span class="n">Database</span><span class="p">()</span>
+<span class="n">db</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;prefix_db&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;think&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;thought&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;thinking&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;thinker&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the prompt:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">iter_prefixes</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&quot;think&quot;</span><span class="p">))</span>
+<span class="go">[&#39;thinker&#39;, &#39;thinking&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="storing-rich-objects">
+<h2>Storing rich objects<a class="headerlink" href="#storing-rich-objects" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to store any kind of Python object in a database, as long as this object is serializable. The class <a class="reference internal" href="reference.html#sophia.ObjectDatabase" title="sophia.ObjectDatabase"><tt class="xref py py-class docutils literal"><span class="pre">sophia.ObjectDatabase</span></tt></a> defines an interface for marshalling/unmarshalling data transparently. By default, it serialises objects (both keys and values) with the <a class="reference external" href="http://docs.python.org/library/pickle.html#module-pickle" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">pickle</span></tt></a> module. If the shape of your data permits it, you may prefer to use the <a class="reference external" href="http://docs.python.org/library/struct.html#module-struct" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">struct</span></tt></a> module. It is faster than <a class="reference external" href="http://docs.python.org/library/pickle.html#module-pickle" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">pickle</span></tt></a>, and is language-independent (which means you can open the same database from C, Python, Lua, or what not, without pain), but on the other hand can only handle fixed-type data.</p>
+<p>Here is, for example, how you would write an interface for a database intended to be used for storing mappings of unicode keys to unsigned integers. Here we choose to encode the keys in UTF-8, and to represent the integers as C <tt class="xref c c-type docutils literal"><span class="pre">unsigned</span> <span class="pre">long</span></tt>, packed in network order (so that the database is portable across architectures):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sophia</span><span class="o">,</span> <span class="nn">struct</span>
+
+<span class="c"># our custom structure for packing integers</span>
+<span class="n">value_struct</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span><span class="s">&quot;!L&quot;</span><span class="p">)</span>
+
+<span class="c"># serialization functions</span>
+
+<span class="n">pack_key</span>     <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">unpack_key</span>   <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">pack_value</span>   <span class="o">=</span> <span class="n">value_struct</span><span class="o">.</span><span class="n">pack</span>
+<span class="n">unpack_value</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">value_struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">v</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c"># anonymous function for instantiating the `ObjectDatabase` class</span>
+<span class="c"># with our custom marshalling functions</span>
+
+<span class="n">MyDB</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">sophia</span><span class="o">.</span><span class="n">ObjectDatabase</span><span class="p">(</span><span class="n">pack_key</span><span class="p">,</span> <span class="n">unpack_key</span><span class="p">,</span>
+    <span class="n">pack_value</span><span class="p">,</span> <span class="n">unpack_value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can now create a database and access it as expected:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span> <span class="o">=</span> <span class="n">MyDB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;my_db&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">u&quot;Penny&quot;</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">u&quot;Bruce&quot;</span><span class="p">,</span> <span class="mi">45</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">u&quot;Penny&quot;</span><span class="p">)</span>
+<span class="go">22</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
+<span class="go">[(u&#39;Bruce&#39;, 45), (u&#39;Penny&#39;, 22)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tuning">
+<h2>Tuning<a class="headerlink" href="#tuning" title="Permalink to this headline">¶</a></h2>
+<p>All the <a class="reference external" href="http://sphia.org/sp_ctl.html">tuning options</a> available in the C API are accessible from Python, at the exception of <tt class="xref py py-const docutils literal"><span class="pre">SPALLOC</span></tt> and <tt class="xref py py-const docutils literal"><span class="pre">SPDIR</span></tt>. Options are set on the <tt class="xref py py-class docutils literal"><span class="pre">Database</span></tt> object itself with the method <tt class="xref py py-meth docutils literal"><span class="pre">Database.setopt()</span></tt>, which takes as argument the constant identifying the option (<tt class="xref py py-const docutils literal"><span class="pre">SPCMP</span></tt>, <tt class="xref py py-const docutils literal"><span class="pre">SPPAGE</span></tt>, etc.), and one or two arguments (depending on the option) indicating the value(s) to be set. The relevant constants are exported into the python module, so you can access them as <tt class="xref py py-const docutils literal"><span class="pre">sophia.SPCMP</span></tt>, <tt class="xref py py-const docutils literal"><span class="pre">sophia.SPPAGE</span></tt>, etc.</p>
+<p>The more useful option is perhaps <tt class="xref py py-const docutils literal"><span class="pre">SPCMP</span></tt>, which can be used to define a custom function for ordering the keys while traversing the database. This function will be passed as argument the first key, its length, the second one, and the corresponding length, in that order, and should return -1, 0, or 1, respectively, if the first key is lower, equal, or higher than the second one. Here is how you would define one for comparing keys on their length, and attach it to your database instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">compare_on_length</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">len1</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="n">len2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">len1</span> <span class="o">&lt;</span> <span class="n">len2</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">len1</span> <span class="o">&gt;</span> <span class="n">len2</span><span class="p">)</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">sophia</span><span class="o">.</span><span class="n">Database</span><span class="p">()</span>
+<span class="n">db</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">sophia</span><span class="o">.</span><span class="n">SPCMP</span><span class="p">,</span> <span class="n">compare_on_length</span><span class="p">)</span>
+
+<span class="c"># add some records to check this works</span>
+<span class="n">db</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;cmp_db&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;long key&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;key&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;very long key&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the prompt:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">())</span>
+<span class="go">[&#39;key&#39;, &#39;long key&#39;, &#39;very long key&#39;]</span>
+</pre></div>
+</div>
+<p>Options persist into a <tt class="xref py py-class docutils literal"><span class="pre">Database</span></tt> object until it is destroyed, and can&#8217;t be changed while the database is opened.</p>
+</div>
+<div class="section" id="on-threading">
+<h2>On threading<a class="headerlink" href="#on-threading" title="Permalink to this headline">¶</a></h2>
+<p>Two things should be kept in mind if you intend to use sophia in a threaded environment:</p>
+<ul class="simple">
+<li>It is not possible to open more than one connection to the same database at the same time. On the other hand, it is ok to share the same database object between threads.</li>
+<li>It is not possible to perform a transaction or to set/delete a record while a <tt class="xref py py-class docutils literal"><span class="pre">sophia.Cursor</span></tt> object (as returned by the group of methods <tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt>, etc.) is alive. It is, however, possible to create a cursor object while a transaction is active.</li>
+</ul>
+<p>A class <a class="reference internal" href="reference.html#sophia.ThreadedDatabase" title="sophia.ThreadedDatabase"><tt class="xref py py-class docutils literal"><span class="pre">sophia.ThreadedDatabase</span></tt></a> handles the second case by protecting the necessary functions with a lock. It should not be used, however, when it isn&#8217;t necessary, as it imposes a significant overhead on writing operations. Here is a summary of what classes you should use depending on what you intend to do with them:</p>
+<ul class="simple">
+<li>If you don&#8217;t work in a threaded environment, use the <a class="reference internal" href="reference.html#sophia.Database" title="sophia.Database"><tt class="xref py py-class docutils literal"><span class="pre">sophia.Database</span></tt></a> and <a class="reference internal" href="reference.html#sophia.ObjectDatabase" title="sophia.ObjectDatabase"><tt class="xref py py-class docutils literal"><span class="pre">sophia.ObjectDatabase</span></tt></a> classes.</li>
+<li>If you work in a threaded environment BUT don&#8217;t need to iterate over the database, do the same as above, and make sure you create and open the database object in the main thread, before passing it around to the other threads.</li>
+<li>If you work in a threaded environement AND need to iterate over the database, use the <a class="reference internal" href="reference.html#sophia.ThreadedDatabase" title="sophia.ThreadedDatabase"><tt class="xref py py-class docutils literal"><span class="pre">sophia.ThreadedDatabase</span></tt></a> class and its sibling <a class="reference internal" href="reference.html#sophia.ThreadedObjectDatabase" title="sophia.ThreadedObjectDatabase"><tt class="xref py py-class docutils literal"><span class="pre">sophia.ThreadedObjectDatabase</span></tt></a>.</li>
+</ul>
+</div>
+<div class="section" id="cursor-pitfall">
+<h2>Cursor pitfall<a class="headerlink" href="#cursor-pitfall" title="Permalink to this headline">¶</a></h2>
+<p>A special behaviour has to be kept in mind when dealing with cursors: it is not possible to close or reopen a database while a cursor is in use. The return value of <tt class="xref py py-meth docutils literal"><span class="pre">Database.close()</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">Database.open()</span></tt>, in addition with <tt class="xref py py-meth docutils literal"><span class="pre">Database.is_closed()</span></tt>, will tell you whether the database has been effectively closed or re-opened. If any of these returns <cite>False</cite>, you should understand that there is a cursor lying out there. The database will effectively be closed as soon as the last remaining opened cursor is closed. A cursor is closed either when it has been exhausted through iteration, or when it goes out of scope:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># open a database and create a cursor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;pitfall_db&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cursor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># try to close the database while a cursor is active; this doesn&#39;t work</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># delete the cursor to make it work; the database is deleted immediately after</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">cursor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">is_closed</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="final-notes">
+<h2>Final notes<a class="headerlink" href="#final-notes" title="Permalink to this headline">¶</a></h2>
+<p>You may want to check the <a class="reference internal" href="reference.html"><em>Reference</em></a> for a summary, and the <a class="reference external" href="http://sphia.org/documentation.html">sophia documentation</a> for more details.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tutorial</a><ul>
+<li><a class="reference internal" href="#basics">Basics</a></li>
+<li><a class="reference internal" href="#storing-and-deleting-records">Storing and deleting records</a></li>
+<li><a class="reference internal" href="#retrieving-records">Retrieving records</a></li>
+<li><a class="reference internal" href="#traversing-records">Traversing records</a></li>
+<li><a class="reference internal" href="#storing-rich-objects">Storing rich objects</a></li>
+<li><a class="reference internal" href="#tuning">Tuning</a></li>
+<li><a class="reference internal" href="#on-threading">On threading</a></li>
+<li><a class="reference internal" href="#cursor-pitfall">Cursor pitfall</a></li>
+<li><a class="reference internal" href="#final-notes">Final notes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">pysophia documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter">Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="pysophia documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">pysophia 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Michaël Meyer.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>
