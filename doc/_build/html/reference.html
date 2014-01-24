@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Reference &mdash; pysophia 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pysophia 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">pysophia 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="reference">
+<h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main-objects">
+<h2>Main objects<a class="headerlink" href="#main-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="sophia.Error">
+<em class="property">exception </em><tt class="descclassname">sophia.</tt><tt class="descname">Error</tt><a class="headerlink" href="#sophia.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised for all database-related errors.</p>
+</dd></dl>
+
+<span class="target" id="module-sophia"></span><dl class="class">
+<dt id="sophia.Database">
+<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">Database</tt><a class="headerlink" href="#sophia.Database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main <cite>Database</cite> class.</p>
+<p>Keys or values passed as argument to the methods which accept them are expected to be byte strings. Returned keys or values are always byte strings.</p>
+<dl class="method">
+<dt id="sophia.Database.setopt">
+<tt class="descname">setopt</tt><big>(</big><em>constant</em>, <em>value1</em><span class="optional">[</span>, <em>value2</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#sophia.Database.setopt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set an option on this database.</p>
+<p>See the <a class="reference external" href="http://sphia.org/sp_ctl.html">sophia documentation</a> for a summary of the available options. <tt class="xref py py-const docutils literal"><span class="pre">SPDIR</span></tt> and <tt class="xref py py-const docutils literal"><span class="pre">SPALLOC</span></tt> are not supported.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.open">
+<tt class="descname">open</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#sophia.Database.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the database, creating it if doesn&#8217;t exist yet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#sophia.Database.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the current connection, if any.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.is_closed">
+<tt class="descname">is_closed</tt><big>(</big><big>)</big><a class="headerlink" href="#sophia.Database.is_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is this database closed? <cite>True</cite> if so, <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.set">
+<tt class="descname">set</tt><big>(</big><em>key</em>, <em>value</em><big>)</big><a class="headerlink" href="#sophia.Database.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a record.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.get">
+<tt class="descname">get</tt><big>(</big><em>key</em><span class="optional">[</span>, <em>default</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#sophia.Database.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a record given its key. If it doesn&#8217;t exist, return <cite>default</cite> if given, <cite>None</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.contains">
+<tt class="descname">contains</tt><big>(</big><em>key</em><big>)</big><a class="headerlink" href="#sophia.Database.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is this key in the database? <cite>True</cite> if so, <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.begin">
+<tt class="descname">begin</tt><big>(</big><big>)</big><a class="headerlink" href="#sophia.Database.begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.commit">
+<tt class="descname">commit</tt><big>(</big><big>)</big><a class="headerlink" href="#sophia.Database.commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commit the current transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.rollback">
+<tt class="descname">rollback</tt><big>(</big><big>)</big><a class="headerlink" href="#sophia.Database.rollback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abort the current transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.len">
+<tt class="descname">len</tt><big>(</big><big>)</big><a class="headerlink" href="#sophia.Database.len" title="Permalink to this definition">¶</a></dt>
+<dd><p>How many records are there in this database?</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.iterkeys">
+<tt class="descname">iterkeys</tt><big>(</big><em>start_key=None</em>, <em>order=sophia.SPGTE</em><big>)</big><a class="headerlink" href="#sophia.Database.iterkeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over all the keys in this database, starting at <cite>start_key</cite>, and in <cite>order</cite>.</p>
+<p>Possible values for <cite>order</cite> are:</p>
+<ul class="simple">
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPGT</span></tt>  - increasing order (skipping the key, if it is equal)</li>
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPGTE</span></tt> - increasing order (with key)</li>
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPLT</span></tt>  - decreasing order (skipping the key, if it is equal)</li>
+<li><tt class="xref py py-const docutils literal"><span class="pre">sophia.SPLTE</span></tt> - decreasing order</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.itervalues">
+<tt class="descname">itervalues</tt><big>(</big><em>start_key=None</em>, <em>order=sophia.SPGTE</em><big>)</big><a class="headerlink" href="#sophia.Database.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <a class="reference internal" href="#sophia.Database.iterkeys" title="sophia.Database.iterkeys"><tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt></a> but for values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sophia.Database.iteritems">
+<tt class="descname">iteritems</tt><big>(</big><em>start_key=None</em>, <em>order=sophia.SPGTE</em><big>)</big><a class="headerlink" href="#sophia.Database.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <a class="reference internal" href="#sophia.Database.iterkeys" title="sophia.Database.iterkeys"><tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt></a> but for pairs of (key, value).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="database-models">
+<h2>Database models<a class="headerlink" href="#database-models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="sophia.ObjectDatabase">
+<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ObjectDatabase</tt><big>(</big><em>pack_key=&lt;function dumps at 0xa49d3ac&gt;</em>, <em>unpack_key=&lt;function loads at 0xa49d41c&gt;</em>, <em>pack_value=&lt;function dumps at 0xa49d3ac&gt;</em>, <em>unpack_value=&lt;function loads at 0xa49d41c&gt;</em><big>)</big><a class="reference internal" href="_modules/sophia.html#ObjectDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sophia.ObjectDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database model for storing arbitrary kinds of objects.</p>
+<p><cite>pack_key</cite>, <cite>unpack_key</cite>, <cite>pack_value</cite>, and <cite>unpack_value</cite>, should be callables that, when passed
+an object as parameter, return a byte representation of it, suitable for storage. By default, all
+these functions use the <a class="reference external" href="http://docs.python.org/library/pickle.html#module-pickle" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">pickle</span></tt></a> module.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="sophia.ThreadedDatabase">
+<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ThreadedDatabase</tt><a class="reference internal" href="_modules/sophia.html#ThreadedDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sophia.ThreadedDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thread-safe database model.</p>
+<p>It should only be used if you want to use a database in a threaded environment
+AND need to iterate over it. Otherwise, the vanilla <a class="reference internal" href="#sophia.Database" title="sophia.Database"><tt class="xref py py-class docutils literal"><span class="pre">Database</span></tt></a> class is suitable
+(and more efficient).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="sophia.ThreadedObjectDatabase">
+<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ThreadedObjectDatabase</tt><big>(</big><em>pack_key=&lt;function dumps at 0xa49d3ac&gt;</em>, <em>unpack_key=&lt;function loads at 0xa49d41c&gt;</em>, <em>pack_value=&lt;function dumps at 0xa49d3ac&gt;</em>, <em>unpack_value=&lt;function loads at 0xa49d41c&gt;</em><big>)</big><a class="reference internal" href="_modules/sophia.html#ThreadedObjectDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sophia.ThreadedObjectDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixing of a <a class="reference internal" href="#sophia.ThreadedDatabase" title="sophia.ThreadedDatabase"><tt class="xref py py-class docutils literal"><span class="pre">ThreadedDatabase</span></tt></a> and an <a class="reference internal" href="#sophia.ObjectDatabase" title="sophia.ObjectDatabase"><tt class="xref py py-class docutils literal"><span class="pre">ObjectDatabase</span></tt></a>.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Reference</a><ul>
+<li><a class="reference internal" href="#main-objects">Main objects</a></li>
+<li><a class="reference internal" href="#database-models">Database models</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">Tutorial</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/reference.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             >previous</a> |</li>
+        <li><a href="index.html">pysophia 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Michaël Meyer.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>
