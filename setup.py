@@ -6,25 +6,6 @@ from distutils.core import setup, Extension
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
-def install_libsophia():
-    src_dir = os.path.join(this_dir, "lib", "sophia", "db")
-    os.chdir(src_dir)
-    try:
-        subprocess.call("make", shell=True)
-        subprocess.call("make install", shell=True)
-    finally:
-        os.chdir(this_dir)
-
-if "install" in sys.argv:
-    if "--no-lib" in sys.argv:
-	     sys.argv.remove("--no-lib")
-    else:
-	     try:
-	         install_libsophia()
-	     except Exception as e:
-	         sys.stderr.write("failed to install libsophia: %s\n" % e)
-	         sys.exit(1)
-
 with open(os.path.join(this_dir, "README.rst")) as f:
 	longdescr = f.read()
 

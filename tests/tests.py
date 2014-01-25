@@ -31,6 +31,7 @@ def test_iter_while_closed(path):
         assert db.close() == False
         assert next(cur)
         del cur
+        assert db.is_closed()
 
 if __name__ == "__main__":
     path = tempfile.mkdtemp()
