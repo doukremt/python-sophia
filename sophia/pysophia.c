@@ -690,7 +690,7 @@ sophia_cursor_new(SophiaDB *db, PyTypeObject *cursortype,
 static inline void
 sophia_cursor_dealloc_internal(SophiaCursor *cursor)
 {
-    assert(cursor->db->cursors > 1);
+    assert(cursor->db->cursors >= 1);
     cursor->db->cursors--;
     if (cursor->db->close_me) {
         sophia_db_close_internal(cursor->db);
