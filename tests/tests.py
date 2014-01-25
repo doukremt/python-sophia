@@ -1,4 +1,9 @@
-import sophia, tempfile, shutil
+import sys, sophia, tempfile, shutil
+
+if sys.version_info.minor < 3:
+    b = lambda s: s
+else:
+    b = lambda s: s.encode()
 
 methods = ["set", "get", "contains", "delete", "begin", "commit", "rollback"]
 itors = ["iterkeys", "itervalues", "iteritems"]
@@ -21,9 +26,9 @@ def test_iter_while_closed(path):
     db = sophia.Database()
     for it in itors:
         db.open(path)
-        db.set("foo", "bar")
+        db.set(b("foo"), b("bar"))
         cur = call(db, it)()
-        db.close()
+        assert db.close() == False
         assert next(cur)
         del cur
 

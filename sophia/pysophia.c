@@ -2,6 +2,10 @@
 extern "C" {
 #endif
 
+#ifdef PSP_DEBUG
+	#undef NDEBUG
+#endif
+
 #include <sophia.h>
 #include <Python.h>
 
@@ -690,7 +694,13 @@ sophia_cursor_new(SophiaDB *db, PyTypeObject *cursortype,
 static inline void
 sophia_cursor_dealloc_internal(SophiaCursor *cursor)
 {
+    assert(cursor->cursor);
     assert(cursor->db->cursors >= 1);
+    
+    /* close the cursor first, only then the database, if needed */
+    sp_destroy(cursor->cursor);
+    cursor->cursor = NULL;
+    
     cursor->db->cursors--;
     if (cursor->db->close_me && cursor->db->cursors == 0) {
         sophia_db_close_internal(cursor->db);
@@ -698,8 +708,6 @@ sophia_cursor_dealloc_internal(SophiaCursor *cursor)
     }
     Py_DECREF(cursor->db);
     cursor->db = NULL;
-    sp_destroy(cursor->cursor);
-    cursor->cursor = NULL;
 }
 
 /* Destroys the Python wrapped cursor, and the underlying cursor if needed */
