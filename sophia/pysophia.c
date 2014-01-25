@@ -692,7 +692,7 @@ sophia_cursor_dealloc_internal(SophiaCursor *cursor)
 {
     assert(cursor->db->cursors >= 1);
     cursor->db->cursors--;
-    if (cursor->db->close_me) {
+    if (cursor->db->close_me && cursor->db->cursors == 0) {
         sophia_db_close_internal(cursor->db);
         cursor->db->close_me = 0;
     }
