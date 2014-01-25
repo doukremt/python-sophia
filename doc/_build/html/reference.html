@@ -146,13 +146,13 @@
 <dl class="method">
 <dt id="sophia.Database.itervalues">
 <tt class="descname">itervalues</tt><big>(</big><em>start_key=None</em>, <em>order=sophia.SPGTE</em><big>)</big><a class="headerlink" href="#sophia.Database.itervalues" title="Permalink to this definition">¶</a></dt>
-<dd><p>Same as <a class="reference internal" href="#sophia.Database.iterkeys" title="sophia.Database.iterkeys"><tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt></a> but for values.</p>
+<dd><p>Same as <a class="reference internal" href="#sophia.Database.iterkeys" title="sophia.Database.iterkeys"><tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt></a>, but for values.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="sophia.Database.iteritems">
 <tt class="descname">iteritems</tt><big>(</big><em>start_key=None</em>, <em>order=sophia.SPGTE</em><big>)</big><a class="headerlink" href="#sophia.Database.iteritems" title="Permalink to this definition">¶</a></dt>
-<dd><p>Same as <a class="reference internal" href="#sophia.Database.iterkeys" title="sophia.Database.iterkeys"><tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt></a> but for pairs of (key, value).</p>
+<dd><p>Same as <a class="reference internal" href="#sophia.Database.iterkeys" title="sophia.Database.iterkeys"><tt class="xref py py-meth docutils literal"><span class="pre">Database.iterkeys()</span></tt></a>, but for pairs of (key, value).</p>
 </dd></dl>
 
 </dd></dl>
@@ -161,27 +161,22 @@
 <div class="section" id="database-models">
 <h2>Database models<a class="headerlink" href="#database-models" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="sophia.ObjectDatabase">
-<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ObjectDatabase</tt><big>(</big><em>pack_key=&lt;function dumps at 0x90593ac&gt;</em>, <em>unpack_key=&lt;function loads at 0x905941c&gt;</em>, <em>pack_value=&lt;function dumps at 0x90593ac&gt;</em>, <em>unpack_value=&lt;function loads at 0x905941c&gt;</em><big>)</big><a class="reference internal" href="_modules/sophia.html#ObjectDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sophia.ObjectDatabase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Database model for storing arbitrary kinds of objects.</p>
-<p><cite>pack_key</cite>, <cite>unpack_key</cite>, <cite>pack_value</cite>, and <cite>unpack_value</cite>, should be callables that, when passed
-an object as parameter, return a byte representation of it, suitable for storage. By default, all
-these functions use the <a class="reference external" href="http://docs.python.org/library/pickle.html#module-pickle" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">pickle</span></tt></a> module.</p>
+<dt id="sophia.sophia.ObjectDatabase">
+<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ObjectDatabase</tt><big>(</big><em>pack_key=&lt;function dumps&gt;</em>, <em>unpack_key=&lt;function loads&gt;</em>, <em>pack_value=&lt;function dumps&gt;</em>, <em>unpack_value=&lt;function loads&gt;</em><big>)</big><a class="headerlink" href="#sophia.sophia.ObjectDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database model for storing arbitrary kinds of objects. <cite>pack_key</cite>, <cite>unpack_key</cite>, <cite>pack_value</cite>, and <cite>unpack_value</cite>, should be callables that, when passed an object as parameter, return a byte representation of it, suitable for storage. By default, all these functions use the <a class="reference external" href="http://docs.python.org/library/pickle.html#module-pickle" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">pickle</span></tt></a> module.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="sophia.ThreadedDatabase">
-<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ThreadedDatabase</tt><a class="reference internal" href="_modules/sophia.html#ThreadedDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sophia.ThreadedDatabase" title="Permalink to this definition">¶</a></dt>
+<dt id="sophia.sophia.ThreadedDatabase">
+<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ThreadedDatabase</tt><a class="headerlink" href="#sophia.sophia.ThreadedDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Thread-safe database model.</p>
-<p>It should only be used if you want to use a database in a threaded environment
-AND need to iterate over it. Otherwise, the vanilla <a class="reference internal" href="#sophia.Database" title="sophia.Database"><tt class="xref py py-class docutils literal"><span class="pre">Database</span></tt></a> class is suitable
-(and more efficient).</p>
+<p>It should only be used if you want to use a database in a threaded environment AND need to iterate over it. Otherwise, the vanilla <a class="reference internal" href="#sophia.Database" title="sophia.Database"><tt class="xref py py-class docutils literal"><span class="pre">Database</span></tt></a> class is suitable (and more efficient).</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="sophia.ThreadedObjectDatabase">
-<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ThreadedObjectDatabase</tt><big>(</big><em>pack_key=&lt;function dumps at 0x90593ac&gt;</em>, <em>unpack_key=&lt;function loads at 0x905941c&gt;</em>, <em>pack_value=&lt;function dumps at 0x90593ac&gt;</em>, <em>unpack_value=&lt;function loads at 0x905941c&gt;</em><big>)</big><a class="reference internal" href="_modules/sophia.html#ThreadedObjectDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sophia.ThreadedObjectDatabase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mixing of a <a class="reference internal" href="#sophia.ThreadedDatabase" title="sophia.ThreadedDatabase"><tt class="xref py py-class docutils literal"><span class="pre">ThreadedDatabase</span></tt></a> and an <a class="reference internal" href="#sophia.ObjectDatabase" title="sophia.ObjectDatabase"><tt class="xref py py-class docutils literal"><span class="pre">ObjectDatabase</span></tt></a>.</p>
+<dt id="sophia.sophia.ThreadedObjectDatabase">
+<em class="property">class </em><tt class="descclassname">sophia.</tt><tt class="descname">ThreadedObjectDatabase</tt><big>(</big><em>pack_key=&lt;function dumps&gt;</em>, <em>unpack_key=&lt;function loads&gt;</em>, <em>pack_value=&lt;function dumps&gt;</em>, <em>unpack_value=&lt;function loads&gt;</em><big>)</big><a class="headerlink" href="#sophia.sophia.ThreadedObjectDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixing of a <tt class="xref py py-class docutils literal"><span class="pre">ThreadedDatabase</span></tt> and an <tt class="xref py py-class docutils literal"><span class="pre">ObjectDatabase</span></tt>.</p>
 </dd></dl>
 
 </div>

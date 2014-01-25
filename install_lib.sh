@@ -9,3 +9,4 @@ for file in db/libsophia.*;  do
     sudo cp -v $file /usr/lib
 done
 sudo cp -v db/sophia.h /usr/include
+make clean

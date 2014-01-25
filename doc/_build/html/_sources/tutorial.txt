@@ -218,7 +218,7 @@ A special behaviour has to be kept in mind when dealing with cursors: it is not 
     >>> # try to close the database while a cursor is active; this doesn't work
     >>> db.close()
     False
-    >>> # delete the cursor to make it work; the database is deleted immediately after
+    >>> # delete the cursor to make it work; the database will be closed immediately after
     >>> del cursor
     >>> db.is_closed()
     True

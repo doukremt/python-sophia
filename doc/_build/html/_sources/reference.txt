@@ -76,20 +76,29 @@ Main objects
 
    .. method:: itervalues(start_key=None, order=sophia.SPGTE)
 
-      Same as :meth:`Database.iterkeys()` but for values.
+      Same as :meth:`Database.iterkeys()`, but for values.
 
    .. method:: iteritems(start_key=None, order=sophia.SPGTE)
 
-      Same as :meth:`Database.iterkeys()` but for pairs of (key, value).
+      Same as :meth:`Database.iterkeys()`, but for pairs of (key, value).
 
 
 Database models
 ===============
 
-.. autoclass:: sophia.ObjectDatabase
+.. class:: sophia.ObjectDatabase(pack_key=<function dumps>, unpack_key=<function loads>, pack_value=<function dumps>, unpack_value=<function loads>)
 
-.. autoclass:: sophia.ThreadedDatabase
+   Database model for storing arbitrary kinds of objects. `pack_key`, `unpack_key`, `pack_value`, and `unpack_value`, should be callables that, when passed an object as parameter, return a byte representation of it, suitable for storage. By default, all these functions use the :mod:`pickle` module.
 
-.. autoclass:: sophia.ThreadedObjectDatabase
+
+.. class:: sophia.ThreadedDatabase
+
+   Thread-safe database model.
+
+   It should only be used if you want to use a database in a threaded environment AND need to iterate over it. Otherwise, the vanilla :class:`Database` class is suitable (and more efficient).
+
+.. class:: sophia.ThreadedObjectDatabase(pack_key=<function dumps>, unpack_key=<function loads>, pack_value=<function dumps>, unpack_value=<function loads>)
+
+   Mixing of a :class:`ThreadedDatabase` and an :class:`ObjectDatabase`.
 
 
