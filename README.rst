@@ -3,6 +3,8 @@ This package provides Python bindings for `sophia <http://sphia.org/>`_, a ligth
 Installation
 ============
 
+First install libsophia using `this script <https://raw.github.com/doukremt/python-sophia/master/install_lib.sh>`_ (to be run from the source package directory if you have the source distribution, or from `/tmp` or similar). Then install the bindings:
+
 With pip::
 
     pip install sophia
