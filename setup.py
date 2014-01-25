@@ -15,14 +15,15 @@ def install_libsophia():
     finally:
         os.chdir(this_dir)
 
-if "--no-lib" in sys.argv:
-    sys.argv.remove("--no-lib")
-else:
-    try:
-        install_libsophia()
-    except Exception as e:
-        sys.stderr.write("failed to install libsophia: %s\n" % e)
-        sys.exit(1)
+if "install" in sys.argv:
+    if "--no-lib" in sys.argv:
+	     sys.argv.remove("--no-lib")
+    else:
+	     try:
+	         install_libsophia()
+	     except Exception as e:
+	         sys.stderr.write("failed to install libsophia: %s\n" % e)
+	         sys.exit(1)
 
 with open(os.path.join(this_dir, "README.rst")) as f:
 	longdescr = f.read()
@@ -45,5 +46,6 @@ setup (
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: C',
         'Programming Language :: Python',
+        'Topic :: Database',
     )
 )

@@ -676,6 +676,7 @@ sophia_cursor_new(SophiaDB *db, PyTypeObject *cursortype,
     
     void *cursor = sp_cursor(db->db, order, begin, (size_t)bsize);
     if (!cursor) {
+        PyObject_Del(pcur);
         PyErr_SetString(SophiaError, sp_error(db->db));
         return NULL;
     }
