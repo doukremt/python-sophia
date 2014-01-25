@@ -707,8 +707,6 @@ static void
 sophia_cursor_dealloc(SophiaCursor *cursor)
 {
     if (cursor->cursor)
-        sp_destroy(cursor->cursor);
-    if (cursor->db)
         sophia_cursor_dealloc_internal(cursor);
     PyObject_Del(cursor);
 }
@@ -720,7 +718,7 @@ static inline int
 sophia_stop_iteration(SophiaCursor *cursor)
 {
     if (!cursor->cursor || !sp_fetch(cursor->cursor)) {
-        if (cursor->db)
+        if (cursor->cursor)
             sophia_cursor_dealloc_internal(cursor);
         return 1;
     }
