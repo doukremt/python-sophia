@@ -5,10 +5,6 @@ Installation
 
 First install libsophia using `this script <https://raw.github.com/doukremt/python-sophia/master/install_lib.sh>`_ (to be run from the source package directory, from `/tmp` or similar). Then download and install the bindings:
 
-    pip install sophia
-
-With the source package::
-
     python setup.py install
 
 You can consult the online documentation of this package `here <http://python-sophia.readthedocs.org/en/latest/>`_. It is also present in the source package under ``doc/_build/html/``
