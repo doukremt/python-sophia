@@ -2,12 +2,12 @@
 extern "C" {
 #endif
 
-#ifdef PSP_DEBUG
-	#undef NDEBUG
-#endif
-
 #include <sophia.h>
 #include <Python.h>
+
+#ifdef PSP_DEBUG
+    #undef NDEBUG
+#endif
 
 #if PY_MAJOR_VERSION < 3
     #define PyBytes_FromStringAndSize PyString_FromStringAndSize
@@ -38,12 +38,12 @@ static int sophia_db_init(SophiaDB *);
 static PyObject * sophia_db_set_option(SophiaDB *, PyObject *);
 static PyObject * sophia_db_open(SophiaDB *, PyObject *);
 static PyObject * sophia_db_close(SophiaDB *);
-static PyObject * sophia_db_is_closed(SophiaDB *db);
+static PyObject * sophia_db_is_closed(SophiaDB *);
 static PyObject * sophia_db_set(SophiaDB *, PyObject *);
 static PyObject * sophia_db_get(SophiaDB *, PyObject *);
 static PyObject * sophia_db_contains(SophiaDB *, PyObject *);
 static PyObject * sophia_db_delete(SophiaDB *, PyObject *);
-static PyObject * sophia_db_count_records(SophiaDB *db);
+static PyObject * sophia_db_count_records(SophiaDB *);
 static PyObject * sophia_db_begin(SophiaDB *);
 static PyObject * sophia_db_commit(SophiaDB *);
 static PyObject * sophia_db_rollback(SophiaDB *);
@@ -53,12 +53,12 @@ static PyObject * sophia_db_iter_items(SophiaDB *, PyObject *, PyObject *);
 
 static PyObject * sophia_cursor_new(SophiaDB *, PyTypeObject *, PyObject *, PyObject *);
 static void sophia_cursor_dealloc(SophiaCursor *);
-static PyObject * sophia_cursor_next_key(SophiaCursor *cursor);
-static PyObject * sophia_cursor_next_value(SophiaCursor *cursor);
-static PyObject * sophia_cursor_next_item(SophiaCursor *cursor);
+static PyObject * sophia_cursor_next_key(SophiaCursor *);
+static PyObject * sophia_cursor_next_value(SophiaCursor *);
+static PyObject * sophia_cursor_next_item(SophiaCursor *);
 
-static int sophia_db_close_internal(SophiaDB *db);
-static inline void sophia_cursor_dealloc_internal(SophiaCursor *cursor);
+static int sophia_db_close_internal(SophiaDB *);
+static void sophia_cursor_dealloc_internal(SophiaCursor *);
 static int pylong_to_uint32_t(PyObject *, uint32_t *);
 static int pyfloat_to_double(PyObject *, double *);
 static PyObject * sophia_db_set_cmp_fun(SophiaDB *, PyObject *);
@@ -692,11 +692,11 @@ sophia_cursor_new(SophiaDB *db, PyTypeObject *cursortype,
  * which encapsulates it. This function is called either when the sophia cursor
  * has traversed all the records requested, or when the object goes out of scope. 
  */
-static inline void
+static void
 sophia_cursor_dealloc_internal(SophiaCursor *cursor)
 {
     assert(cursor->cursor);
-    assert(cursor->db->cursors >= 1);
+    assert(cursor->db->cursors > 0);
     
     /* close the cursor first, only then the database, if needed */
     sp_destroy(cursor->cursor);
@@ -789,6 +789,13 @@ sophia_cursor_next_item(SophiaCursor *cursor)
     
     pkey = PyBytes_FromStringAndSize(key, (Py_ssize_t)ksize);
     pvalue = PyBytes_FromStringAndSize(value, (Py_ssize_t)vsize);
+    
+    if (!(pkey && pvalue)) {
+        Py_XDECREF(pkey);
+        Py_XDECREF(pvalue);
+        return NULL;
+    }
+
     rv = PyTuple_Pack(2, pkey, pvalue);
     
     Py_DECREF(pkey);
@@ -812,7 +819,7 @@ sophia_compare_custom(char *a, size_t asz, char *b, size_t bsz, void *cmp_fun)
 {
     PyObject *pasz = NULL, *pbsz = NULL, *pa = NULL, *pb = NULL, *prv = NULL;
     
-    if (  !(pasz = PyLong_FromSize_t(asz))
+    if (   !(pasz = PyLong_FromSize_t(asz))
         || !(pbsz = PyLong_FromSize_t(bsz))
         || !(pa = PyBytes_FromStringAndSize(a, (Py_ssize_t)asz))
         || !(pb = PyBytes_FromStringAndSize(b, (Py_ssize_t)bsz)))
@@ -857,7 +864,7 @@ error_call:
 #if PY_MAJOR_VERSION >= 3
 
 static struct PyModuleDef _sophiamodule = {
-   PyModuleDef_HEAD_INIT, "_sophia", "docstring", -1, NULL
+   PyModuleDef_HEAD_INIT, "_sophia", NULL, -1, NULL
 };
 
 #define PSP_NOTHING NULL

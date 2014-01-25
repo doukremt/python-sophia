@@ -22,8 +22,7 @@ class ObjectDatabase(Database):
         self.pack_value = pack_value
         self.unpack_value = unpack_value
         super(ObjectDatabase, self).__init__()
-        
-
+    
     def get(self, key, default=None):
         value = super(ObjectDatabase, self).get(self.pack_key(key), default)
         return default if value is default else self.unpack_value(value)
