@@ -13,7 +13,7 @@ cmodule = Extension('_sophia', sources=["sophia/pysophia.c"], libraries=["sophia
 
 setup (
     name = 'Sophia',
-    version = '0.1',
+    version = '0.1.1',
     description = 'Python bindings for the Sophia database library',
     long_description = longdescr,
     author='Michaël Meyer',
