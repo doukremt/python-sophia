@@ -1,7 +1,7 @@
 Tutorial
 ********
 
-All examples below assume Python 2. To run them under Python 3, replace the ``"strings"`` expressions by ``b"byte strings"``.
+All examples below assume you're using Python 2. To run them under Python 3, you should replace all the ``"strings"`` expressions by ``b"byte strings"``.
 
 Basics
 ======
@@ -54,7 +54,9 @@ Records are added with the :meth:`Database.set()` method, and deleted with :meth
     # delete a record
     db.delete("Audrey Hepburn")
 
-When using these functions, database modifications are performed atomically, which adds some overhead. If you want to store several records at once, you can use explicit transactions. The added items will then be kept into memory until the transaction is committed or aborted, at which time they will be saved or left away, respectively. Transactions are really easy to perform::
+When using these functions, database modifications are performed atomically, which adds some overhead. If you want to store several records at once, you can use explicit transactions. The added items will then be kept into memory until the transaction is committed or aborted, at which time they will be saved or left away, respectively. If a transaction is not committed and the underlying database object is closed, all modifications will be lost.
+
+Transactions are really easy to perform::
 
     # start a transaction
     db.begin()
@@ -85,12 +87,13 @@ Records can be retrieved by using the :meth:`Database.get()` method, and checked
     "The Black Dahlia"
     >>> db.contains("Scarlett Johansson")
     True
-    >>> db.contains("Nicole Kidman")
+    >>> db.contains("Nicole Kidman") # we just aborted the transaction up there
     False
 
 If a second argument is given to :meth:`Database.get()`, it will be returned as value if the key is not in the database. The default is to return `None` when a key is missing.
 
-    >>> db.get("Gwyneth Paltrow")
+    >>> print(db.get("Gwyneth Paltrow"))
+    None
     >>> db.get("Gwyneth Paltrow", "A perfect number")
     "A perfect number"
 
@@ -98,12 +101,12 @@ If a second argument is given to :meth:`Database.get()`, it will be returned as 
 Traversing records
 ==================
 
-Records can be traversed in order with the :meth:`Database.iterkeys()`, :meth:`Database.itervalues()`, or :meth:`Database.iteritems()` methods, which yield respectively the keys, the values, or the pairs of (key, value) in the database. These methods take two optional arguments: the key at which to start iterating (which need not necessarily exist in the database), and the order in which the records should be traversed. Possible values for the `order` argument are:
+Records can be traversed in order with the :meth:`Database.iterkeys()`, :meth:`Database.itervalues()`, or :meth:`Database.iteritems()` methods, which yield respectively the keys, the values, or the pairs of (key, value) in the database. These methods take two optional arguments: the key at which to start iterating (which need not necessarily exist in the database, in which case the next one, if any, is chosen instead), and the order in which the records should be traversed. Possible values for `order` are:
 
 * :const:`sophia.SPGT`  - increasing order (skipping the key, if it is equal)
 * :const:`sophia.SPGTE` - increasing order (with key)
 * :const:`sophia.SPLT`  - decreasing order (skipping the key, if it is equal)
-* :const:`sophia.SPLTE` - decreasing order
+* :const:`sophia.SPLTE` - decreasing order (with key)
 
 By default, iteration is done in lexicographical order, and starts at the very first key in the database, including it.
 
@@ -132,7 +135,7 @@ At the prompt::
 Storing rich objects
 ====================
 
-It is possible to store any kind of Python object in a database, as long as this object is serializable. The class :class:`sophia.ObjectDatabase` defines an interface for marshalling/unmarshalling data transparently. By default, it serialises objects (both keys and values) with the :mod:`pickle` module. If the shape of your data permits it, you may prefer to use the :mod:`struct` module. It is faster than :mod:`pickle`, and is language-independent (which means you can open the same database from C, Python, Lua, or what not, without pain), but on the other hand can only handle fixed-type data.
+It is possible to store any kind of Python object in a database, as long as this object is serialisable. The class :class:`sophia.ObjectDatabase` defines an interface for marshalling/unmarshalling data transparently. By default, it serialises objects (both keys and values) with the :mod:`pickle` module. If the shape of your data permits it, you may prefer to use the :mod:`struct` module. It is faster than :mod:`pickle`, and is language-independent (which means you can open the same database from C, Python, Lua, or what not, without pain), but on the other hand can only handle fixed-type data.
 
 Here is, for example, how you would write an interface for a database intended to be used for storing mappings of unicode keys to unsigned integers. Here we choose to encode the keys in UTF-8, and to represent the integers as C :c:type:`unsigned long`, packed in network order (so that the database is portable across architectures)::
 
@@ -142,7 +145,6 @@ Here is, for example, how you would write an interface for a database intended t
     value_struct = struct.Struct("!L")
 	
     # serialization functions
-    
     pack_key     = lambda k: k.encode("utf-8")
     unpack_key   = lambda k: k.decode("utf-8")
     pack_value   = value_struct.pack
@@ -195,7 +197,7 @@ Options persist into a :class:`Database` object until it is destroyed, and can't
 On threading
 ============
 
-Two things should be kept in mind if you intend to use sophia in a threaded environment:
+Two things should be kept in mind if you intend to use :mod:`sophia` in a threaded environment:
 
 * It is not possible to open more than one connection to the same database at the same time. On the other hand, it is ok to share the same database object between threads.
 * It is not possible to perform a transaction or to set/delete a record while a :class:`sophia.Cursor` object (as returned by the group of methods :meth:`Database.iterkeys()`, etc.) is alive. It is, however, possible to create a cursor object while a transaction is active.
@@ -203,13 +205,13 @@ Two things should be kept in mind if you intend to use sophia in a threaded envi
 A class :class:`sophia.ThreadedDatabase` handles the second case by protecting the necessary functions with a lock. It should not be used, however, when it isn't necessary, as it imposes a significant overhead on writing operations. Here is a summary of what classes you should use depending on what you intend to do with them:
 
 * If you don't work in a threaded environment, use the :class:`sophia.Database` and :class:`sophia.ObjectDatabase` classes.
-* If you work in a threaded environment BUT don't need to iterate over the database, do the same as above, and make sure you create and open the database object in the main thread, before passing it around to the other threads.
-* If you work in a threaded environement AND need to iterate over the database, use the :class:`sophia.ThreadedDatabase` class and its sibling :class:`sophia.ThreadedObjectDatabase`.
+* If you work in a threaded environment BUT don't need to iterate over the database, do the same as above, and make sure you create and open the database object in the main thread, before passing it around to the other threads, so that the connection itself is safe.
+* If you work in a threaded environment AND need to iterate over the database, use the :class:`sophia.ThreadedDatabase` class and its sibling :class:`sophia.ThreadedObjectDatabase`.
 
-Cursor pitfall
-==============
+Cursors pitfall
+===============
 
-A special behaviour has to be kept in mind when dealing with cursors: it is not possible to close or reopen a database while a cursor is in use. The return value of :meth:`Database.close()` and :meth:`Database.open()`, in addition with :meth:`Database.is_closed()`, will tell you whether the database has been effectively closed or re-opened. If any of these returns `False`, you should understand that there is a cursor lying out there. The database will effectively be closed as soon as the last remaining opened cursor is closed. A cursor is closed either when it has been exhausted through iteration, or when it goes out of scope::
+A special behaviour has to be kept in mind when dealing with cursors: it is not possible to close or reopen a database while a cursor is in use. The return value of :meth:`Database.close()` and :meth:`Database.open()` (in addition with :meth:`Database.is_closed()`), will tell you whether the database has been effectively closed or re-opened, respectively, when you call them. If :meth:`Database.open()` and :meth:`Database.close()` return `False`, you should understand that there is at least one cursor lying out there that needs to be deallocated. The database will effectively be closed as soon as the last remaining opened cursor is closed. A cursor is closed either when it has been exhausted through iteration, or when it goes out of scope::
 
     >>> # open a database and create a cursor
     >>> db.open("pitfall_db")
@@ -223,7 +225,7 @@ A special behaviour has to be kept in mind when dealing with cursors: it is not 
     >>> db.is_closed()
     True
 
-Final notes
-===========
+Final note
+==========
 
-You may want to check the :doc:`reference` for a summary, and the `sophia documentation <http://sphia.org/documentation.html>`_ for more details.
+You may want to check the :doc:`reference` for a summary of the above, as well as the `sophia documentation <http://sphia.org/documentation.html>`_ if you need more details.

@@ -1,6 +1,9 @@
 Reference
 *********
 
+.. module:: sophia
+   :synopsis: Python bindings to `libsophia`
+
 Main objects
 ============
 
@@ -8,28 +11,32 @@ Main objects
 
    Exception raised for all database-related errors.
 
-.. module:: sophia
-   :synopsis: Python bindings to `libsophia`
-
 .. class:: Database
 
-   Main `Database` class.
+   Main database class.
    
    Keys or values passed as argument to the methods which accept them are expected to be byte strings. Returned keys or values are always byte strings.
 
    .. method:: setopt(constant, value1[, value2])
 
-      Set an option on this database.
+      Configure this database.
       
-      See the `sophia documentation <http://sphia.org/sp_ctl.html>`_ for a summary of the available options. :const:`SPDIR` and :const:`SPALLOC` are not supported.
+      Calling this method is only valid when the database is closed. See the `sophia documentation <http://sphia.org/sp_ctl.html>`_ for a summary
+      of the available options. :const:`SPDIR` and :const:`SPALLOC` are not supported.
 
    .. method:: open(path)
 
       Open the database, creating it if doesn't exist yet.
+      
+      If a connection is already active, try to close it and open a new one; in this case, `False` can be returned,
+      which means that the previous connection has not been successfully closed because a `sophia.Cursor` object is
+      hanging around somewhere. Otherwise, `True` is returned.
 	
    .. method:: close()
    
       Close the current connection, if any.
+      
+      As above, a return value `False` indicates that it is not possible to close the database for the time being.
    
    .. method:: is_closed()
    
@@ -37,11 +44,15 @@ Main objects
 
    .. method:: set(key, value)
    
-      Add a record.
+      Add a record, or replace an existent one.
 
    .. method:: get(key[, default])
    
       Retrieve a record given its key. If it doesn't exist, return `default` if given, `None` otherwise.
+   
+   .. method:: delete(key)
+   
+      Delete a record.
 
    .. method:: contains(key)
    
@@ -86,9 +97,12 @@ Main objects
 Database models
 ===============
 
-.. class:: sophia.ObjectDatabase(pack_key=<function dumps>, unpack_key=<function loads>, pack_value=<function dumps>, unpack_value=<function loads>)
+.. class:: sophia.ObjectDatabase(pack_key=pickle.dumps, unpack_key=pickle.loads, pack_value=pickle.dumps, unpack_value=pickle.loads)
 
-   Database model for storing arbitrary kinds of objects. `pack_key`, `unpack_key`, `pack_value`, and `unpack_value`, should be callables that, when passed an object as parameter, return a byte representation of it, suitable for storage. By default, all these functions use the :mod:`pickle` module.
+   Database model for storing arbitrary kinds of objects.
+   
+   `pack_key`, `unpack_key`, `pack_value`, and `unpack_value`, should be callables that, when passed an object as parameter, return a byte
+   representation of it, suitable for storage. By default, all these functions use the :mod:`pickle` module.
 
 
 .. class:: sophia.ThreadedDatabase
@@ -97,7 +111,7 @@ Database models
 
    It should only be used if you want to use a database in a threaded environment AND need to iterate over it. Otherwise, the vanilla :class:`Database` class is suitable (and more efficient).
 
-.. class:: sophia.ThreadedObjectDatabase(pack_key=<function dumps>, unpack_key=<function loads>, pack_value=<function dumps>, unpack_value=<function loads>)
+.. class:: sophia.ThreadedObjectDatabase(pack_key=pickle.dumps, unpack_key=pickle.loads, pack_value=pickle.dumps, unpack_value=pickle.loads)
 
    Mixing of a :class:`ThreadedDatabase` and an :class:`ObjectDatabase`.
 

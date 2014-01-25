@@ -634,21 +634,18 @@ sophia_db_rollback(SophiaDB *db)
 static PyObject *
 sophia_db_iter_keys(SophiaDB *db, PyObject *args, PyObject *kw)
 {
-    ensure_is_opened(db, NULL);
     return sophia_cursor_new(db, &SophiaCursorKeysType, args, kw);
 }
 
 static PyObject *
 sophia_db_iter_values(SophiaDB *db, PyObject *args, PyObject *kw)
 {
-    ensure_is_opened(db, NULL);
     return sophia_cursor_new(db, &SophiaCursorValuesType, args, kw);
 }
 
 static PyObject *
 sophia_db_iter_items(SophiaDB *db, PyObject *args, PyObject *kw)
 {
-    ensure_is_opened(db, NULL);
     return sophia_cursor_new(db, &SophiaCursorItemsType, args, kw);
 }
 
