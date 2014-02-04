@@ -3,7 +3,11 @@
 __all__ = ['Database', 'Error', 'ObjectDatabase', 'SPCMP', 'SPGC', 'SPGCF', 'SPGROW', 'SPGT', 'SPGTE', 'SPLT', 'SPLTE', 'SPMERGE', 'SPMERGEWM', 'SPPAGE', 'ThreadedDatabase', 'ThreadedObjectDatabase']
 
 from _sophia import *
-import threading, pickle
+import threading
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 
 class ObjectDatabase(Database):

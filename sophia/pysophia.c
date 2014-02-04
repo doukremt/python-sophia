@@ -6,7 +6,7 @@ extern "C" {
 #include <Python.h>
 
 #ifdef PSP_DEBUG
-    #undef NDEBUG
+    #undef NDEBUG /* Python define NDEBUG per default */
 #endif
 
 #if PY_MAJOR_VERSION < 3
@@ -444,6 +444,7 @@ sophia_db_set_option(SophiaDB *db, PyObject *args)
         
         uint32_t new_size;
         double resize;
+        
         if (pylong_to_uint32_t(pvalue, &new_size) == -1 ||
             pyfloat_to_double(pvalue2, &resize) == -1)
             return NULL;
@@ -461,12 +462,12 @@ sophia_db_set_option(SophiaDB *db, PyObject *args)
     Py_RETURN_NONE;
 }
 
-#define ensure_is_opened(pdb, rv)                                     \
-do {                                                                  \
-    if (!(pdb)->db) {                                                  \
+#define ensure_is_opened(pdb, rv)                                       \
+do {                                                                    \
+    if (!(pdb)->db) {                                                   \
         PyErr_SetString(SophiaError, "operation on a closed database"); \
         return (rv);                                                    \
-    }                                                                  \
+    }                                                                   \
 } while (0)
 
 static PyObject *
@@ -509,7 +510,9 @@ sophia_db_get(SophiaDB *db, PyObject *args)
     int rv = sp_get(db->db, key, (size_t)ksize, &value, &vsize);
     switch (rv) {
         case 1:
-            break;
+            pvalue = PyBytes_FromStringAndSize(value, (Py_ssize_t)vsize);
+            free(value);
+            return pvalue;
         case 0:
             if (pvalue)
                 return pvalue;
@@ -518,10 +521,6 @@ sophia_db_get(SophiaDB *db, PyObject *args)
             PyErr_SetString(SophiaError, sp_error(db->db));
             return NULL;
     }
-    
-    pvalue = PyBytes_FromStringAndSize(value, (Py_ssize_t)vsize);
-    free(value);
-    return pvalue;
 }
 
 static PyObject *
@@ -769,14 +768,15 @@ static PyObject *
 sophia_cursor_next_item(SophiaCursor *cursor)
 {
     size_t ksize, vsize;
+    const char *key, *value;
     PyObject *rv, *pkey, *pvalue;
     
     if (sophia_stop_iteration(cursor))
         return NULL;
     
-    const char *key = sp_key(cursor->cursor);
+    key = sp_key(cursor->cursor);
     ksize = sp_keysize(cursor->cursor);
-    const char *value = sp_value(cursor->cursor);
+    value = sp_value(cursor->cursor);
     vsize = sp_valuesize(cursor->cursor);
     
     if (key == NULL || value == NULL || ksize == 0 || vsize == 0) {
@@ -847,12 +847,14 @@ sophia_compare_custom(char *a, size_t asz, char *b, size_t bsz, void *cmp_fun)
     return (rv < 0 ? -1 : (rv > 0 ? 1 : 0));
 
 /* Fall back to using the default comparison function */
+
 error_args:
     Py_XDECREF(pasz);
     Py_XDECREF(pbsz);
     Py_XDECREF(pa);
     Py_XDECREF(pb);
     return sophia_compare_default(a, asz, b, bsz, NULL);
+
 error_call:
     Py_XDECREF(prv);
     return sophia_compare_default(a, asz, b, bsz, NULL);
@@ -880,7 +882,7 @@ init_sophia(void)
         "SPCMP", "SPPAGE", "SPMERGEWM", "SPGC", "SPMERGE", "SPGCF", "SPGROW", NULL};
     
     static int sophia_constant_values[] = {SPGT, SPGTE, SPLT, SPLTE,
-        SPCMP, SPPAGE, SPMERGEWM, SPGC, SPMERGE, SPGCF, SPGROW};
+        SPCMP, SPPAGE, SPMERGEWM, SPGC, SPMERGE, SPGCF, SPGROW, 0};
     
     if (PyType_Ready(&SophiaDBType) == -1)
         return PSP_NOTHING;
