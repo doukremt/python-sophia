@@ -264,7 +264,7 @@ sophia_db_open(SophiaDB *db, PyObject *args)
 {
     char *path;
     
-    if (!PyArg_ParseTuple(args, "s:__init__", &path))
+    if (!PyArg_ParseTuple(args, "s:open", &path))
         return NULL;
     
     if (db->db) {
