@@ -61,7 +61,7 @@ class ThreadedDatabase(Database):
     """
 
     def __init__(self):
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         super(ThreadedDatabase, self).__init__()
     
     def _protect(self, method, *args, **kwargs):
