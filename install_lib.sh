@@ -4,14 +4,15 @@ set -o errexit
 
 prefix="/usr/lib"
 sophia_repo='https://github.com/pmwkaa/sophia.git'
+branch='v1.1'
 
 mkdir -p lib
 cd lib
 if [ -d "sophia" ]; then
     cd sophia
-    git fetch $sophia_repo
+    git fetch $sophia_repo $branch
 else
-    git clone $sophia_repo
+    git clone $sophia_repo -b $branch
     cd sophia
 fi
 
